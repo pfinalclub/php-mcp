@@ -3,6 +3,12 @@
     "description": "PHP8 + Workerman 通用 MCP Server Composer 扩展包",
     "type": "library",
     "license": "MIT",
+    "homepage": "https://github.com/pfinalclub/php-mcp",
+    "support": {
+        "issues": "https://github.com/pfinalclub/php-mcp/issues",
+        "source": "https://github.com/pfinalclub/php-mcp",
+        "docs": "https://github.com/pfinalclub/php-mcp/blob/main/README.md"
+    },
     "keywords": [
         "mcp",
         "model-context-protocol",
