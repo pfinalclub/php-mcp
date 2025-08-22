@@ -8,8 +8,8 @@
 
 namespace PFPMcp\Tools;
 
-use PhpMcp\Attributes\McpTool;
-use PhpMcp\Attributes\Schema;
+use PFPMcp\Attributes\McpTool;
+use PFPMcp\Attributes\Schema;
 
 /**
  * 计算器工具

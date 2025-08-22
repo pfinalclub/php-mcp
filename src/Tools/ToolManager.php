@@ -56,7 +56,7 @@ class ToolManager
             $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
             
             foreach ($methods as $method) {
-                $attributes = $method->getAttributes(\PhpMcp\Attributes\McpTool::class);
+                $attributes = $method->getAttributes(\PFPMcp\Attributes\McpTool::class);
                 
                 if (empty($attributes)) {
                     continue;
@@ -111,7 +111,7 @@ class ToolManager
             ];
             
             // 获取参数描述
-            $attributes = $param->getAttributes(\PhpMcp\Attributes\Schema::class);
+            $attributes = $param->getAttributes(\PFPMcp\Attributes\Schema::class);
             if (!empty($attributes)) {
                 $args = $attributes[0]->getArguments();
                 $paramInfo['description'] = $args['description'] ?? '';

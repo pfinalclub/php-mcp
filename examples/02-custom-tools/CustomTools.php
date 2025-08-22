@@ -8,8 +8,8 @@
 
 namespace Examples\CustomTools;
 
-use PhpMcp\Attributes\McpTool;
-use PhpMcp\Attributes\Schema;
+use PFPMcp\Attributes\McpTool;
+use PFPMcp\Attributes\Schema;
 
 /**
  * 自定义工具示例
