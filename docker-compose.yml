@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mcp-server:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - MCP_ENV=production
+      - MCP_LOG_LEVEL=info
+      - MCP_TRANSPORT=http
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=80
+    volumes:
+      - ./storage:/var/www/mcp/storage
+      - ./logs:/var/log/mcp
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 可选：添加数据库如果需要
+  database:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: secure_password
+      MYSQL_DATABASE: mcp_server
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

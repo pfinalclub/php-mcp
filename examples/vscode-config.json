@@ -1,0 +1,20 @@
+{
+  "mcp.servers": {
+    "pfinal-calculator": {
+      "command": "php",
+      "args": ["/path/to/pfinal-php-mcp/examples/01-basic-usage/server.php"],
+      "env": {
+        "MCP_TRANSPORT": "stdio",
+        "MCP_LOG_LEVEL": "info"
+      }
+    },
+    "pfinal-custom-tools": {
+      "command": "php",
+      "args": ["/path/to/pfinal-php-mcp/examples/02-custom-tools/server.php"],
+      "env": {
+        "MCP_TRANSPORT": "stdio",
+        "MCP_LOG_LEVEL": "debug"
+      }
+    }
+  }
+}

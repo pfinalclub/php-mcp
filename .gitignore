@@ -1,0 +1,55 @@
+# Composer
+/vendor/
+composer.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Cursor & Ruler
+.cursor/
+.ruler/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+/logs/
+*.log
+
+# Cache
+/cache/
+/tmp/
+
+# Coverage
+/coverage/
+coverage.xml
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build
+/build/
+/dist/
+
+# Docker
+.dockerignore
+
+# Node modules (if any)
+node_modules/
+
+# PHPUnit
+.phpunit.result.cache
+
+# PHPStan
+.phpstan.result.cache
+
+# PHP CS Fixer
+.php-cs-fixer.cache
+.php-cs-fixer.php
