@@ -89,7 +89,7 @@ class EventHandler
      * @param string $event 事件名称
      * @param callable|null $listener 监听器回调，为null时移除所有监听器
      */
-    public function off(string $event, ?callable $listener = null): void
+    public function off(string $event, callable $listener = null): void
     {
         if (!isset($this->listeners[$event])) {
             return;

@@ -20,7 +20,7 @@ class StdioTransport implements TransportInterface
     /**
      * 消息处理器
      */
-    private ?callable $messageHandler = null;
+    private $messageHandler = null;
     
     /**
      * 启动传输协议

@@ -21,7 +21,7 @@ class HttpSseTransport implements TransportInterface
     /**
      * 消息处理器
      */
-    private ?callable $messageHandler = null;
+    private $messageHandler = null;
     
     /**
      * Worker实例
