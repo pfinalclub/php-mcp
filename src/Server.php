@@ -110,7 +110,10 @@ class Server
     {
         try {
             // 创建传输协议实例
-            $this->transport = TransportFactory::create($this->config->getTransport());
+            $this->transport = TransportFactory::create(
+                $this->config->getTransport(),
+                $this->config->getAll()
+            );
             
             // 初始化各个管理器
             $this->connectionManager = new ConnectionManager($this->config, $this->logger);
@@ -127,7 +130,8 @@ class Server
             $this->logger->info('MCP Server initialized successfully', [
                 'transport' => $this->config->getTransport(),
                 'host' => $this->config->getHost(),
-                'port' => $this->config->getPort()
+                'port' => $this->config->getPort(),
+                'stdio_config' => $this->config->getStdioConfig()
             ]);
             
         } catch (\Throwable $e) {
@@ -242,6 +246,95 @@ class Server
         $this->logger->info('Restarting MCP Server...');
         $this->stop();
         $this->start();
+    }
+    
+    /**
+     * 处理 JSON-RPC 请求
+     * 
+     * 这是服务器的核心方法，用于处理来自客户端的 JSON-RPC 请求
+     * 
+     * @param array $request JSON-RPC 请求数据
+     * @return array JSON-RPC 响应数据
+     * @throws ServerException 当请求处理失败时
+     */
+    public function handleRequest(array $request): array
+    {
+        try {
+            $this->logger->debug('Handling JSON-RPC request', [
+                'method' => $request['method'] ?? 'unknown',
+                'id' => $request['id'] ?? null
+            ]);
+            
+            // 验证 JSON-RPC 请求格式
+            if (!isset($request['jsonrpc']) || $request['jsonrpc'] !== '2.0') {
+                return $this->createErrorResponse(
+                    $request['id'] ?? null,
+                    -32600,
+                    'Invalid Request',
+                    'JSON-RPC version must be 2.0'
+                );
+            }
+            
+            // 验证必需字段
+            if (!isset($request['method'])) {
+                return $this->createErrorResponse(
+                    $request['id'] ?? null,
+                    -32600,
+                    'Invalid Request',
+                    'Method is required'
+                );
+            }
+            
+            // 处理请求
+            $response = $this->processRequest($request);
+            
+            $this->logger->debug('JSON-RPC request processed successfully', [
+                'method' => $request['method'],
+                'id' => $request['id'] ?? null
+            ]);
+            
+            return $response;
+            
+        } catch (\Throwable $e) {
+            $this->logger->error('Error handling JSON-RPC request', [
+                'method' => $request['method'] ?? 'unknown',
+                'id' => $request['id'] ?? null,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return $this->createErrorResponse(
+                $request['id'] ?? null,
+                -32603,
+                'Internal error',
+                $e->getMessage()
+            );
+        }
+    }
+    
+    /**
+     * 处理请求（内部方法）
+     * 
+     * @param array $request 请求数据
+     * @return array 响应数据
+     */
+    private function processRequest(array $request): array
+    {
+        $method = $request['method'];
+        $params = $request['params'] ?? [];
+        $id = $request['id'] ?? null;
+        
+        return match ($method) {
+            'initialize' => $this->handleInitializeRequest($params, $id),
+            'tools/list' => $this->handleToolsListRequest($params, $id),
+            'tools/call' => $this->handleToolCallRequest($params, $id),
+            'resources/list' => $this->handleResourcesListRequest($params, $id),
+            'resources/read' => $this->handleResourceReadRequest($params, $id),
+            'prompts/list' => $this->handlePromptsListRequest($params, $id),
+            'prompts/get' => $this->handlePromptGetRequest($params, $id),
+            'notifications/cancel' => $this->handleCancelNotification($params, $id),
+            default => $this->handleUnknownMethodRequest($method, $params, $id)
+        };
     }
     
     /**
@@ -534,25 +627,22 @@ class Server
     }
     
     /**
-     * 处理未知方法请求
+     * 处理未知方法请求（旧版本，已废弃）
      * 
      * @param array $message 消息数据
      * @param TcpConnection $connection 连接对象
      * @return array 响应数据
+     * @deprecated 使用新的 handleRequest 方法
      */
     private function handleUnknownMethod(array $message, TcpConnection $connection): array
     {
-        return [
-            'jsonrpc' => '2.0',
-            'id' => $message['id'] ?? null,
-            'error' => [
-                'code' => -32601,
-                'message' => 'Method not found',
-                'data' => [
-                    'method' => $message['method'] ?? 'unknown'
-                ]
-            ]
-        ];
+        $method = $message['method'] ?? 'unknown';
+        return $this->createErrorResponse(
+            $message['id'] ?? null,
+            -32601,
+            'Method not found',
+            "Method '{$method}' not found"
+        );
     }
     
     /**
@@ -677,5 +767,226 @@ class Server
     public function getLogger(): LoggerInterface
     {
         return $this->logger;
+    }
+    
+    /**
+     * 处理初始化请求（新版本）
+     * 
+     * @param array $params 请求参数
+     * @param mixed $id 请求ID
+     * @return array 响应数据
+     */
+    private function handleInitializeRequest(array $params, $id): array
+    {
+        $this->logger->info('Handling initialize request');
+        
+        return [
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'result' => [
+                'protocolVersion' => '2024-11-05',
+                'capabilities' => [
+                    'tools' => [],
+                    'resources' => [],
+                    'prompts' => []
+                ],
+                'serverInfo' => [
+                    'name' => 'PFPMcp',
+                    'version' => '1.0.0'
+                ]
+            ]
+        ];
+    }
+    
+    /**
+     * 处理工具列表请求（新版本）
+     * 
+     * @param array $params 请求参数
+     * @param mixed $id 请求ID
+     * @return array 响应数据
+     */
+    private function handleToolsListRequest(array $params, $id): array
+    {
+        $tools = $this->toolManager->listTools();
+        
+        return [
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'result' => [
+                'tools' => $tools
+            ]
+        ];
+    }
+    
+    /**
+     * 处理工具调用请求（新版本）
+     * 
+     * @param array $params 请求参数
+     * @param mixed $id 请求ID
+     * @return array 响应数据
+     */
+    private function handleToolCallRequest(array $params, $id): array
+    {
+        $toolName = $params['name'] ?? '';
+        $arguments = $params['arguments'] ?? [];
+        
+        $result = $this->toolManager->callTool($toolName, $arguments);
+        
+        return [
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'result' => [
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => json_encode($result)
+                    ]
+                ]
+            ]
+        ];
+    }
+    
+    /**
+     * 处理资源列表请求（新版本）
+     * 
+     * @param array $params 请求参数
+     * @param mixed $id 请求ID
+     * @return array 响应数据
+     */
+    private function handleResourcesListRequest(array $params, $id): array
+    {
+        $resources = $this->resourceManager->listResources();
+        
+        return [
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'result' => [
+                'resources' => $resources
+            ]
+        ];
+    }
+    
+    /**
+     * 处理资源读取请求（新版本）
+     * 
+     * @param array $params 请求参数
+     * @param mixed $id 请求ID
+     * @return array 响应数据
+     */
+    private function handleResourceReadRequest(array $params, $id): array
+    {
+        $uri = $params['uri'] ?? '';
+        
+        $resource = $this->resourceManager->readResource($uri);
+        
+        return [
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'result' => $resource
+        ];
+    }
+    
+    /**
+     * 处理提示列表请求（新版本）
+     * 
+     * @param array $params 请求参数
+     * @param mixed $id 请求ID
+     * @return array 响应数据
+     */
+    private function handlePromptsListRequest(array $params, $id): array
+    {
+        $prompts = $this->promptManager->listPrompts();
+        
+        return [
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'result' => [
+                'prompts' => $prompts
+            ]
+        ];
+    }
+    
+    /**
+     * 处理提示获取请求（新版本）
+     * 
+     * @param array $params 请求参数
+     * @param mixed $id 请求ID
+     * @return array 响应数据
+     */
+    private function handlePromptGetRequest(array $params, $id): array
+    {
+        $name = $params['name'] ?? '';
+        $arguments = $params['arguments'] ?? [];
+        
+        $prompt = $this->promptManager->getPrompt($name, $arguments);
+        
+        return [
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'result' => [
+                'prompt' => $prompt
+            ]
+        ];
+    }
+    
+    /**
+     * 处理取消通知请求
+     * 
+     * @param array $params 请求参数
+     * @param mixed $id 请求ID
+     * @return array 响应数据
+     */
+    private function handleCancelNotification(array $params, $id): array
+    {
+        // 通知请求不需要响应
+        return [
+            'jsonrpc' => '2.0',
+            'id' => null
+        ];
+    }
+    
+    /**
+     * 处理未知方法请求（新版本）
+     * 
+     * @param string $method 方法名
+     * @param array $params 请求参数
+     * @param mixed $id 请求ID
+     * @return array 响应数据
+     */
+    private function handleUnknownMethodRequest(string $method, array $params, $id): array
+    {
+        return $this->createErrorResponse(
+            $id,
+            -32601,
+            'Method not found',
+            "Method '{$method}' not found"
+        );
+    }
+    
+    /**
+     * 创建错误响应
+     * 
+     * @param mixed $id 请求ID
+     * @param int $code 错误代码
+     * @param string $message 错误消息
+     * @param string|null $data 错误数据
+     * @return array 错误响应
+     */
+    private function createErrorResponse($id, int $code, string $message, ?string $data = null): array
+    {
+        $response = [
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'error' => [
+                'code' => $code,
+                'message' => $message
+            ]
+        ];
+        
+        if ($data !== null) {
+            $response['error']['data'] = $data;
+        }
+        
+        return $response;
     }
 }

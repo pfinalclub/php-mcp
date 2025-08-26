@@ -3,15 +3,16 @@
 [![PHP Version](https://img.shields.io/badge/php-8.2+-blue.svg)](https://php.net)
 [![Workerman Version](https://img.shields.io/badge/workerman-4.0+-green.svg)](https://www.workerman.net/)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](https://github.com/pfinal/php-mcp/actions)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/pfinalclub/php-mcp/releases)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](https://github.com/pfinalclub/php-mcp/actions)
 
 一个基于 PHP8 和 Workerman 的高性能 MCP (Model Context Protocol) 服务器，提供稳定可靠的网络通信服务。
 
 ## ✨ 特性
 
 - 🚀 基于 PHP8.2+ 和 Workerman 4.0+ 的纯 Workerman 实现
-- 🔌 支持多种传输协议：stdio、HTTP、HTTP+SSE、WebSocket
-- 📡 事件驱动的架构设计
+- 🔌 支持多种传输协议：stdio、HTTP、HTTP+SSE、WebSocket、Streamable HTTP
+- 📡 事件驱动的架构设计，支持非阻塞 I/O
 - 🛠️ 自动 MCP 元素发现和注册
 - 🛡️ 完善的错误处理和日志记录
 - 🧪 完整的测试覆盖
@@ -19,11 +20,12 @@
 - 🔧 支持自定义工具、资源和提示
 - 🎯 高性能并发处理
 - 🔥 零外部 MCP 依赖，完全自主实现
+- ⚡ 优化的 stdio 传输协议，支持智能模式选择
 
 ## 📦 安装
 
 ```bash
-composer require pfinal/php-mcp
+composer require pfinalclub/php-mcp
 ```
 
 ## 🚀 快速开始

@@ -28,6 +28,11 @@ class ServerConfig
         'port' => 8080,
         'log_level' => 'info',
         'log_file' => 'php://stderr',
+        'stdio' => [
+            'mode' => 'optimized', // 'blocking' | 'optimized' | 'auto'
+            'buffer_interval' => 10, // 缓冲区处理间隔（毫秒）
+            'non_blocking' => true, // 是否使用非阻塞模式
+        ],
         'session' => [
             'backend' => 'memory',
             'ttl' => 3600,
@@ -87,6 +92,11 @@ class ServerConfig
             'port' => isset($_ENV['MCP_PORT']) ? (int)$_ENV['MCP_PORT'] : null,
             'log_level' => $_ENV['MCP_LOG_LEVEL'] ?? null,
             'log_file' => $_ENV['MCP_LOG_FILE'] ?? null,
+            'stdio' => [
+                'mode' => $_ENV['MCP_STDIO_MODE'] ?? null,
+                'buffer_interval' => isset($_ENV['MCP_STDIO_BUFFER_INTERVAL']) ? (int)$_ENV['MCP_STDIO_BUFFER_INTERVAL'] : null,
+                'non_blocking' => isset($_ENV['MCP_STDIO_NON_BLOCKING']) ? (bool)$_ENV['MCP_STDIO_NON_BLOCKING'] : null,
+            ],
             'session' => [
                 'backend' => $_ENV['MCP_SESSION_BACKEND'] ?? null,
                 'ttl' => isset($_ENV['MCP_SESSION_TTL']) ? (int)$_ENV['MCP_SESSION_TTL'] : null,
@@ -117,8 +127,8 @@ class ServerConfig
             $errors[] = "Invalid transport: {$this->config['transport']}. Valid options: " . implode(', ', $validTransports);
         }
         
-        // 验证端口
-        if ($this->config['port'] < 1 || $this->config['port'] > 65535) {
+        // 验证端口（stdio 模式时跳过端口验证）
+        if ($this->config['transport'] !== 'stdio' && ($this->config['port'] < 1 || $this->config['port'] > 65535)) {
             $errors[] = "Invalid port: {$this->config['port']}. Must be between 1 and 65535";
         }
         
@@ -134,7 +144,7 @@ class ServerConfig
             $errors[] = "Invalid session backend: {$this->config['session']['backend']}. Valid options: " . implode(', ', $validSessionBackends);
         }
         
-        // 验证数值配置
+        // 验证数值配置（stdio 模式时放宽部分验证）
         if ($this->config['session']['ttl'] < 1) {
             $errors[] = "Session TTL must be greater than 0";
         }
@@ -147,12 +157,15 @@ class ServerConfig
             $errors[] = "Rate window must be greater than 0";
         }
         
-        if ($this->config['performance']['max_connections'] < 1) {
-            $errors[] = "Max connections must be greater than 0";
-        }
-        
-        if ($this->config['performance']['timeout'] < 1) {
-            $errors[] = "Timeout must be greater than 0";
+        // stdio 模式时跳过网络相关配置验证
+        if ($this->config['transport'] !== 'stdio') {
+            if ($this->config['performance']['max_connections'] < 1) {
+                $errors[] = "Max connections must be greater than 0";
+            }
+            
+            if ($this->config['performance']['timeout'] < 1) {
+                $errors[] = "Timeout must be greater than 0";
+            }
         }
         
         if (!empty($errors)) {
@@ -208,6 +221,16 @@ class ServerConfig
     public function getLogFile(): string
     {
         return $this->config['log_file'];
+    }
+    
+    /**
+     * 获取 stdio 配置
+     * 
+     * @return array stdio 配置
+     */
+    public function getStdioConfig(): array
+    {
+        return $this->config['stdio'];
     }
     
     /**

@@ -40,4 +40,18 @@ interface TransportInterface
      * @param callable $handler 消息处理器
      */
     public function onMessage(callable $handler): void;
+    
+    /**
+     * 获取传输协议信息
+     * 
+     * @return array 传输协议信息
+     */
+    public function getInfo(): array;
+    
+    /**
+     * 检查传输协议是否正在运行
+     * 
+     * @return bool 是否正在运行
+     */
+    public function isRunning(): bool;
 }

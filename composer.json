@@ -3,6 +3,7 @@
     "description": "PHP8 + Workerman 通用 MCP Server Composer 扩展包",
     "type": "library",
     "license": "MIT",
+    "version": "1.0.1",
     "homepage": "https://github.com/pfinalclub/php-mcp",
     "support": {
         "issues": "https://github.com/pfinalclub/php-mcp/issues",

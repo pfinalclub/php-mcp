@@ -1,0 +1,33 @@
+{
+  "mcpServers": {
+    "pfinal-memo": {
+      "command": "php",
+      "args": ["/path/to/pfinal-memo-mcp/server.php"],
+      "env": {
+        "MCP_TRANSPORT": "stdio",
+        "MCP_LOG_LEVEL": "debug",
+        "MCP_DEBUG": "true"
+      }
+    },
+    "pfinal-memo-dev": {
+      "command": "php",
+      "args": ["/path/to/pfinal-memo-mcp/server.php"],
+      "env": {
+        "MCP_TRANSPORT": "stdio",
+        "MCP_LOG_LEVEL": "debug",
+        "MCP_DEBUG": "true",
+        "MCP_SESSION_BACKEND": "memory",
+        "MCP_SESSION_TTL": "3600"
+      }
+    },
+    "pfinal-memo-test": {
+      "command": "php",
+      "args": ["/path/to/pfinal-memo-mcp/examples/test-server.php"],
+      "env": {
+        "MCP_TRANSPORT": "stdio",
+        "MCP_LOG_LEVEL": "info"
+      }
+    }
+  }
+}
+
