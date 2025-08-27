@@ -9,7 +9,7 @@
  * @package PFPMcp\Scripts
  */
 
-echo "🚀 PFPMcp v1.0.1 发布脚本\n";
+echo "🚀 PFPMcp v1.0.2 发布脚本\n";
 echo "========================\n\n";
 
 // 检查当前目录
@@ -48,8 +48,8 @@ $composerJson = json_decode(file_get_contents('composer.json'), true);
 $version = $composerJson['version'] ?? 'unknown';
 echo "当前版本: {$version}\n";
 
-if ($version !== '1.0.1') {
-    echo "❌ 错误：版本号不匹配，期望 1.0.1，实际 {$version}\n";
+if ($version !== '1.0.2') {
+    echo "❌ 错误：版本号不匹配，期望 1.0.2，实际 {$version}\n";
     exit(1);
 }
 
@@ -94,39 +94,29 @@ if (strpos($csResult, 'ERROR') !== false) {
 echo "🏷️  创建 Git 标签...\n";
 $tagMessage = "Release v{$version}
 
-🚀 重大优化
-- Stdio 传输协议全面优化
-- 非阻塞 I/O 处理
-- 事件驱动架构
-- 智能模式选择
+🔌 使用改进和兼容性修复
+- WebSocket 连接管理优化
+- 传输协议接口统一
+- 服务器事件路由增强
+- JSON Schema 格式兼容性
 
-🔧 核心改进
-- 新增 OptimizedStdioTransport
-- 新增 LegacyStdioTransport
-- 重构 StdioTransport 工厂类
-- 配置系统增强
+🛠️ 核心功能改进
+- WebSocketTransport 增强
+- TransportInterface 扩展
+- Server 类优化
+- ToolManager 修复
 
-📊 性能提升
-- 响应性提升
-- 资源利用优化
-- 稳定性增强
-- 可观测性
-
-🛠️ 代码质量
-- PHP 8.2+ 兼容性修复
-- 配置验证优化
-- 传输协议修复
-- 注释完善
-
-📚 文档更新
-- 新增优化文档
-- 更新项目状态
-- 代码整理总结
+📊 兼容性提升
+- Cursor IDE 集成修复
+- MCP 协议合规
+- WebSocket 稳定性提升
+- 事件系统完善
 
 🔄 向后兼容
-- 保持 API 接口不变
-- 默认配置兼容
-- 渐进式升级支持";
+- 保持原有 API 接口不变
+- 保持原有配置格式兼容
+- 保持原有工具定义方式
+- 新增功能不影响现有代码";
 
 file_put_contents("release_message.txt", $tagMessage);
 shell_exec("git tag -a v{$version} -F release_message.txt");

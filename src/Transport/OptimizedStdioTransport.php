@@ -112,11 +112,41 @@ class OptimizedStdioTransport implements TransportInterface
     /**
      * 设置消息处理器
      * 
-     * @param callable $handler 消息处理回调函数
+     * @param callable $handler 消息处理回调函数，接收 connection 和 data 参数
      */
     public function onMessage(callable $handler): void
     {
         $this->messageHandler = $handler;
+    }
+    
+    /**
+     * 设置连接处理器
+     * 
+     * @param callable $handler 连接处理回调函数，接收 connection 参数
+     */
+    public function onConnect(callable $handler): void
+    {
+        // stdio 传输协议不支持连接事件
+    }
+    
+    /**
+     * 设置关闭处理器
+     * 
+     * @param callable $handler 关闭处理回调函数，接收 connection 参数
+     */
+    public function onClose(callable $handler): void
+    {
+        // stdio 传输协议不支持关闭事件
+    }
+    
+    /**
+     * 设置错误处理器
+     * 
+     * @param callable $handler 错误处理回调函数，接收 connection 和 error 参数
+     */
+    public function onError(callable $handler): void
+    {
+        // stdio 传输协议不支持错误事件
     }
     
     /**

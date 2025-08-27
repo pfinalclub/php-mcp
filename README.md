@@ -3,7 +3,7 @@
 [![PHP Version](https://img.shields.io/badge/php-8.2+-blue.svg)](https://php.net)
 [![Workerman Version](https://img.shields.io/badge/workerman-4.0+-green.svg)](https://www.workerman.net/)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/pfinalclub/php-mcp/releases)
+[![Version](https://img.shields.io/badge/version-1.0.2-blue.svg)](https://github.com/pfinalclub/php-mcp/releases)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](https://github.com/pfinalclub/php-mcp/actions)
 
 一个基于 PHP8 和 Workerman 的高性能 MCP (Model Context Protocol) 服务器，提供稳定可靠的网络通信服务。
@@ -21,6 +21,7 @@
 - 🎯 高性能并发处理
 - 🔥 零外部 MCP 依赖，完全自主实现
 - ⚡ 优化的 stdio 传输协议，支持智能模式选择
+- 🔌 完整的 WebSocket 连接管理和事件路由
 
 ## 📦 安装
 

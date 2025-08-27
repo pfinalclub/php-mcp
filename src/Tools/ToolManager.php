@@ -204,14 +204,19 @@ class ToolManager
         $tools = [];
         
         foreach ($this->tools as $name => $tool) {
+            $properties = $this->buildProperties($tool['parameters']);
+            
+            // 确保空数组在 JSON 序列化时变成空对象 {}
+            $inputSchema = [
+                'type' => 'object',
+                'properties' => empty($properties) ? (object) [] : $properties,
+                'required' => $this->getRequiredProperties($tool['parameters'])
+            ];
+            
             $tools[] = [
                 'name' => $name,
                 'description' => $tool['description'],
-                'inputSchema' => [
-                    'type' => 'object',
-                    'properties' => $this->buildProperties($tool['parameters']),
-                    'required' => $this->getRequiredProperties($tool['parameters'])
-                ]
+                'inputSchema' => $inputSchema
             ];
         }
         

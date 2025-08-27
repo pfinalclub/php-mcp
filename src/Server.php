@@ -127,6 +127,9 @@ class Server
             // 设置事件处理器
             $this->setupEventHandlers();
             
+            // 设置传输协议事件处理器
+            $this->setupTransportEventHandlers();
+            
             $this->logger->info('MCP Server initialized successfully', [
                 'transport' => $this->config->getTransport(),
                 'host' => $this->config->getHost(),
@@ -141,6 +144,34 @@ class Server
             ]);
             throw new ServerException('Failed to initialize server: ' . $e->getMessage(), 0, $e);
         }
+    }
+    
+    /**
+     * 设置传输协议事件处理器
+     * 
+     * 将传输协议的事件绑定到服务器的事件系统
+     */
+    private function setupTransportEventHandlers(): void
+    {
+        // 设置连接处理器
+        $this->transport->onConnect(function (TcpConnection $connection) {
+            $this->eventHandler->emit('connect', $connection);
+        });
+        
+        // 设置消息处理器
+        $this->transport->onMessage(function (TcpConnection $connection, $data) {
+            $this->eventHandler->emit('message', $connection, $data);
+        });
+        
+        // 设置关闭处理器
+        $this->transport->onClose(function (TcpConnection $connection) {
+            $this->eventHandler->emit('close', $connection);
+        });
+        
+        // 设置错误处理器
+        $this->transport->onError(function (TcpConnection $connection, $error) {
+            $this->eventHandler->emit('error', $connection, $error);
+        });
     }
     
     /**

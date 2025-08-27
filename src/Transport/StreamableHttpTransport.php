@@ -26,6 +26,21 @@ class StreamableHttpTransport implements TransportInterface
     private $messageHandler = null;
     
     /**
+     * 连接处理器回调函数
+     */
+    private $connectHandler = null;
+    
+    /**
+     * 关闭处理器回调函数
+     */
+    private $closeHandler = null;
+    
+    /**
+     * 错误处理器回调函数
+     */
+    private $errorHandler = null;
+    
+    /**
      * Workerman Worker 实例
      */
     private ?Worker $worker = null;
@@ -68,7 +83,7 @@ class StreamableHttpTransport implements TransportInterface
         
         $this->worker->onMessage = function (TcpConnection $connection, $data) {
             if ($this->messageHandler !== null) {
-                call_user_func($this->messageHandler, $data);
+                call_user_func($this->messageHandler, $connection, $data);
             }
         };
         
@@ -106,11 +121,41 @@ class StreamableHttpTransport implements TransportInterface
     /**
      * 设置消息处理器
      * 
-     * @param callable $handler 消息处理回调函数
+     * @param callable $handler 消息处理回调函数，接收 connection 和 data 参数
      */
     public function onMessage(callable $handler): void
     {
         $this->messageHandler = $handler;
+    }
+    
+    /**
+     * 设置连接处理器
+     * 
+     * @param callable $handler 连接处理回调函数，接收 connection 参数
+     */
+    public function onConnect(callable $handler): void
+    {
+        $this->connectHandler = $handler;
+    }
+    
+    /**
+     * 设置关闭处理器
+     * 
+     * @param callable $handler 关闭处理回调函数，接收 connection 参数
+     */
+    public function onClose(callable $handler): void
+    {
+        $this->closeHandler = $handler;
+    }
+    
+    /**
+     * 设置错误处理器
+     * 
+     * @param callable $handler 错误处理回调函数，接收 connection 和 error 参数
+     */
+    public function onError(callable $handler): void
+    {
+        $this->errorHandler = $handler;
     }
     
     /**
