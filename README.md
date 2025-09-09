@@ -3,7 +3,7 @@
 [![PHP Version](https://img.shields.io/badge/php-8.2+-blue.svg)](https://php.net)
 [![Workerman Version](https://img.shields.io/badge/workerman-4.0+-green.svg)](https://www.workerman.net/)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.2-blue.svg)](https://github.com/pfinalclub/php-mcp/releases)
+[![Version](https://img.shields.io/badge/version-1.0.3-blue.svg)](https://github.com/pfinalclub/php-mcp/releases)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](https://github.com/pfinalclub/php-mcp/actions)
 
 一个基于 PHP8 和 Workerman 的高性能 MCP (Model Context Protocol) 服务器，提供稳定可靠的网络通信服务。
@@ -217,6 +217,29 @@ docker run -d \
   pfinal/php-mcp
 ```
 
+## 👥 社区
+
+### 参与方式
+
+- **GitHub Issues**: [报告 Bug 和功能请求](https://github.com/pfinalclub/php-mcp/issues)
+- **GitHub Discussions**: [技术讨论和问题咨询](https://github.com/pfinalclub/php-mcp/discussions)
+- **贡献指南**: [查看如何贡献代码](CONTRIBUTING.md)
+- **社区指南**: [了解社区文化和行为准则](docs/community-guidelines.md)
+
+### 社区活动
+
+- **月度技术分享**: 每月最后一个周五
+- **代码审查会议**: 每周三
+- **新功能讨论**: 功能发布前
+- **年度贡献者大会**: 每年 10 月
+
+### 贡献者等级
+
+- 🌟 **新手贡献者**: 文档改进、简单 Bug 修复
+- 🚀 **活跃贡献者**: 功能开发、代码审查
+- 💎 **核心贡献者**: 架构设计、重要功能
+- 👑 **维护者**: 版本发布、社区管理
+
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
@@ -225,7 +248,7 @@ docker run -d \
 
 ```bash
 # 克隆仓库
-git clone https://github.com/pfinal/php-mcp.git
+git clone https://github.com/pfinalclub/php-mcp.git
 cd php-mcp
 
 # 安装依赖
@@ -245,6 +268,14 @@ composer fix
 - 编写完整的测试用例
 - 添加详细的文档注释
 
+### 贡献流程
+
+1. Fork 项目
+2. 创建功能分支
+3. 提交更改
+4. 创建 Pull Request
+5. 等待代码审查
+
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
@@ -262,8 +293,10 @@ composer fix
 如果您遇到问题或有建议，请：
 
 1. 查看 [文档](docs/)
-2. 搜索 [Issues](https://github.com/pfinal/php-mcp/issues)
-3. 创建新的 [Issue](https://github.com/pfinal/php-mcp/issues/new)
+2. 搜索 [Issues](https://github.com/pfinalclub/php-mcp/issues)
+3. 创建新的 [Issue](https://github.com/pfinalclub/php-mcp/issues/new)
+4. 参与 [Discussions](https://github.com/pfinalclub/php-mcp/discussions)
+5. 联系维护者: lampxiezi@gmail.com
 
 ---
 
